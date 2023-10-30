@@ -1,0 +1,40 @@
+# Terraform
+.terraform/
+.terraform*
+terraform.tfstate*
+
+# Env
+venv/
+.python-version
+
+# CSVs
+*.csv
+
+# Logs
+!logs/
+execution.log
+
+# Secrets
+!.secrets
+!.secrets/.gitkeep
+.secrets/*.json
+.secrets/*.txt
+.secrets/*.yml
+.secrets/*.yaml
+.secrets/*.csv
+.env
+
+# Python
+__pycache__/
+
+# Tests
+test.ipynb
+
+# VSCode
+.vscode
+
+# Github
+.github
+
+# Extra
+.DS_Store
