@@ -69,6 +69,7 @@ The complete build process is separated into 2 steps:
 
 ## What's next
 
+- Adding a `destroy.sh` process.
 - Adding a Secrets Manager environment to the Cloud Run container.
 - Adding VPC Peering functionality.
 - Tagging accross all resources created.
