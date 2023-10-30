@@ -8,6 +8,8 @@ resource "google_compute_subnetwork" "subnet" {
   ip_cidr_range = var.subnet_cidr
   region        = var.region
   network       = google_compute_network.vpc.name
+
+  depends_on = [google_compute_network.vpc]
 }
 
 resource "google_compute_firewall" "firewall_egress" {
@@ -21,12 +23,16 @@ resource "google_compute_firewall" "firewall_egress" {
   destination_ranges = ["0.0.0.0/0"]
 
   direction = "EGRESS"
+
+  depends_on = [google_compute_network.vpc]
 }
 
 resource "google_compute_router" "router" {
   name    = "${var.project_id}-rtr-g-vpcrouter"
   region  = var.region
   network = google_compute_network.vpc.name
+
+  depends_on = [google_compute_network.vpc]
 }
 
 resource "google_compute_router_nat" "nat" {
@@ -40,14 +46,17 @@ resource "google_compute_router_nat" "nat" {
     name                    = google_compute_subnetwork.subnet.self_link
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
+
+  depends_on = [google_compute_router.router, google_compute_subnetwork.subnet]
 }
 
-resource "google_storage_bucket" "audience_data" {
-  name     = "${var.project_id}-gcs-${var.region_short}-audiences"
-  location = var.region
-}
+# TODO
+# resource "google_storage_bucket" "bucket" {
+#   name     = "${var.project_id}-gcs-${var.region_short}-bucket"
+#   location = var.region
+# }
 
-resource "google_cloud_run_v2_job" "uploader" {
+resource "google_cloud_run_v2_job" "job" {
   name = "${var.project_id}-crj-${var.region_short}-uploader"
   location = var.region
   launch_stage = "BETA"
@@ -70,16 +79,16 @@ resource "google_cloud_run_v2_job" "uploader" {
 
         resources {
           limits = {
-            cpu = "2"
-            memory = "8Gi"
+            cpu = "1"
+            memory = "2Gi"
           }
         }
       }
 
-      timeout = "1800s"
+      timeout = "180s"
       max_retries = 3
 
-      service_account = google_service_account.run_sa.email
+      service_account = google_service_account.job_sa.email
 
       vpc_access {
         network_interfaces {
@@ -97,9 +106,11 @@ resource "google_cloud_run_v2_job" "uploader" {
       launch_stage
     ]
   }
+
+  depends_on = [google_compute_network.vpc, google_compute_subnetwork.subnet]
 }
 
-resource "google_cloud_scheduler_job" "job" {
+resource "google_cloud_scheduler_job" "scheduler" {
   name     = "${var.project_id}-sch-g-scheduler"
   region   = var.region
   schedule = var.job_schedule
@@ -108,16 +119,16 @@ resource "google_cloud_scheduler_job" "job" {
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${google_cloud_run_v2_job.uploader.name}:run"
+    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${google_cloud_run_v2_job.job.name}:run"
     oauth_token {
       service_account_email = google_service_account.scheduler_sa.email
     }
   }
 }
 
-resource "google_service_account" "run_sa" {
-  account_id   = "gsa-g-uploader"
-  display_name = "gsa-g-uploader"
+resource "google_service_account" "job_sa" {
+  account_id   = "gsa-g-job"
+  display_name = "gsa-g-job"
 }
 
 resource "google_service_account" "scheduler_sa" {
@@ -126,9 +137,9 @@ resource "google_service_account" "scheduler_sa" {
 }
 
 resource "google_cloud_run_v2_job_iam_member" "scheduler_invoker" {
-  project = google_cloud_run_v2_job.uploader.project
-  location = google_cloud_run_v2_job.uploader.location
-  name = google_cloud_run_v2_job.uploader.name
+  project = google_cloud_run_v2_job.job.project
+  location = google_cloud_run_v2_job.job.location
+  name = google_cloud_run_v2_job.job.name
   role = "roles/run.invoker"
   member = "serviceAccount:${google_service_account.scheduler_sa.email}"
 }
@@ -138,18 +149,21 @@ resource "google_artifact_registry_repository_iam_member" "artifact_registry_rea
   project  = var.project_id
   repository = var.artifact_registry_repository
   role    = "roles/artifactregistry.reader"
-  member  = "serviceAccount:${google_service_account.run_sa.email}"
+  member  = "serviceAccount:${google_service_account.job_sa.email}"
 }
 
-resource "google_storage_bucket_iam_member" "bucket_admin" {
-  bucket = google_storage_bucket.audience_data.name
-  role    = "roles/storage.admin"
-  member = "serviceAccount:${google_service_account.run_sa.email}"
-}
+# TODO
+# resource "google_storage_bucket_iam_member" "bucket_admin" {
+#   bucket = google_storage_bucket.bucket.name
+#   role    = "roles/storage.admin"
+#   member = "serviceAccount:${google_service_account.job_sa.email}"
+# }
 
 resource "google_compute_subnetwork_iam_member" "compute_network_user" {
   subnetwork = google_compute_subnetwork.subnet.name
   role       = "roles/compute.networkUser"
   region     = var.region
-  member     = "serviceAccount:${google_service_account.run_sa.email}"
+  member     = "serviceAccount:${google_service_account.job_sa.email}"
+
+  depends_on = [google_compute_subnetwork.subnet]
 }
