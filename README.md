@@ -37,7 +37,7 @@ The complete build process is separated into 2 steps:
 2. In the `build.sh` script, replace the placeholder name of with your file name: `GOOGLE_APPLICATION_CREDENTIALS=".secrets/dem-prj-s-gsa-g-terraform.json"`
 3. Setup both terraform repositories in `terraform/environments/staging/`, using all four `variables.tf` and `terraform.tfvars` files (naming conventions are constructed directly in the `main.tf` files).
 4. Make sure you understand the `build.sh` script before executing. No extra changes are needed there, except for assuring executable permissions (use `chmod +x build.sh`).
-5. Execute `./build.sh` and wait for the logs to complete.
+5. Execute `./build.sh` from `terraform/environments/staging` and wait for the logs to complete.
 
 ## What's next
 
