@@ -40,10 +40,10 @@ echo ""
 echo "***** You will need to delete the terraform state bucket, terraform service account, and project manually"
 
 echo ""
-echo "***** Disabling Google Cloud Service APIs"
+echo "***** Disabling Google Cloud Service APIs (you will need to disable the Service Usage API manually)"
 gcloud services disable cloudresourcemanager.googleapis.com --project "${PROJECT_ID}"
-echo "***** You will need to disable the Service Usage API manually"
 
+echo ""
 echo "***** Removing local Docker image"
 docker rmi -f "${IMAGE_URI}"
 
