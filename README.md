@@ -25,6 +25,11 @@ The complete build process is separated into 2 steps:
     - Networking, including Firewall Rules and a NAT Router.
     - Cloud Run Job and Scheduler.
     - Service Accounts and assigns IAM Roles.
+   
+## Requirements
+- gcloud
+- Docker
+- Terraform
 
 ## Config
 
