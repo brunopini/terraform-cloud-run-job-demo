@@ -32,8 +32,6 @@ The complete build process is separated into 2 steps:
 .
 ├── .secrets
 │   └── dem-prj-s-gsa-g-terraform.json
-├── LICENSE
-├── README.md
 ├── code
 │   └── demo-image
 │       ├── Dockerfile
