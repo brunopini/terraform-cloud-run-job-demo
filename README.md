@@ -26,6 +26,36 @@ The complete build process is separated into 2 steps:
     - Cloud Run Job and Scheduler.
     - Service Accounts and assigns IAM Roles.
    
+## Tree
+
+```
+.
+├── .secrets
+│   └── dem-prj-s-gsa-g-terraform.json
+├── LICENSE
+├── README.md
+├── code
+│   └── demo-image
+│       ├── Dockerfile
+│       ├── demo.py
+│       └── requirements.txt
+└── terraform
+    └── environments
+        └── staging
+            ├── bootstrap
+            │   ├── apis.tf
+            │   ├── main.tf
+            │   ├── outputs.tf
+            │   ├── providers.tf
+            │   ├── terraform.tfvars
+            │   └── variables.tf
+            ├── build.sh
+            ├── main.tf
+            ├── providers.tf
+            ├── terraform.tfvars
+            └── variables.tf
+```
+   
 ## Requirements
 - gcloud
 - Docker
