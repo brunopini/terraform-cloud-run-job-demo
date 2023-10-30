@@ -30,7 +30,7 @@ docker push "${IMAGE_URI}"
 
 echo ""
 echo "***** Building main staging infrastrcuture"
-cd ../../terraform/environments/develop || exit
+cd ../../terraform/environments/staging || exit
 export TF_VAR_google_credentials_file_path="../../../${GOOGLE_APPLICATION_CREDENTIALS}"
 terraform init -migrate-state \
     -backend-config="bucket=${ASSETS_BUCKET}" \
