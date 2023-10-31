@@ -3,6 +3,7 @@
 echo "***** Fetching credentials, authenticating and configuring gcloud CLI"
 # Update below with appropriate credentials file path
 GOOGLE_APPLICATION_CREDENTIALS=".secrets/dem-prj-s-gsa-g-terraform.json"
+
 echo ""
 echo "***** Authenticating gcloud CLI & fetching project variables"
 cd bootstrap || exit
