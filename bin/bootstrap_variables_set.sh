@@ -9,3 +9,5 @@ export PROJECT_ID=$(terraform output -raw project_id)
 export ASSETS_BUCKET=$(terraform output -raw assets_bucket)
 export REPOSITORY_BASE_URL=$(terraform output -raw registry_base_url)
 export REPOSITORY_ID=$(terraform output -raw repository_id)
+
+echo ""
