@@ -11,6 +11,4 @@ resource "google_artifact_registry_repository" "repository" {
   location      = var.region
   repository_id = "${var.project_id}-arr-${var.region_short}-docker"
   format        = "DOCKER"
-
-  depends_on = [google_project_service.artifact_registry]
 }
