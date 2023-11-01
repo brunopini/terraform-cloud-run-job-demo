@@ -86,9 +86,9 @@ All building and provisioning are handled in the `build.sh` script, which consis
 ## Config
 
 1. You must place your service account credentials file in the `.serets` directory - name it something better than the default file.
-2. In the `build.sh` script, replace the placeholder name of with your file name: `GOOGLE_APPLICATION_CREDENTIALS=".secrets/dem-prj-s-gsa-g-terraform.json"`
+2. In the `build.sh` script, follow commented instructions.
 3. Setup both Terraform repositories in `terraform/environments/staging/`, using all four `variables.tf` and `terraform.tfvars` files (naming conventions are constructed directly in the `main.tf` and `vpc.tf` files).
-4. Make sure you understand both `build.sh` and `destroy.sh` scripts before executing. No extra changes are needed there, except for assuring executable permissions (`chmod +x [script]`).
+4. Make sure you understand both `build.sh` and `destroy.sh` scripts before executing. Not a lot of changes are needed there, except for asserting executable permissions (`chmod +x [script]`).
 
 ## Building
 
@@ -102,7 +102,7 @@ The Terraform code sets all dependencies provisioned by this repo so that destru
 
 After the destruction is complete, you will still need to delete the original Cloud Storage Terraform State Bucket and diable the Service Usage API manually - you will likely see an error.
 
-> If destruction fails at any point (and bootstrap infrastructure is destroyed, regardless of the success level), you will need to re-build all infrastructure before attemplting to retry destruction, because APIs needed will likely have been successfully disabled.
+> If destruction fails at any point (and bootstrap infrastructure is destroyed, regardless of the success level), you might need to re-build all infrastructure before attemplting to retry destruction, because APIs needed might have been successfully disabled. This should no longer happen as frequently after improvements made.
 
 ## What's next
 
