@@ -13,3 +13,5 @@ done
 
 echo "***** Exporting ENV_PATH as [$env]"
 export ENV_PATH="${env}"
+
+echo ""

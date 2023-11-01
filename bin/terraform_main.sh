@@ -11,7 +11,6 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-echo ""
 echo "***** Building [$ENV_PATH] main infrastrcuture"
 cd "$ROOT_DIR/terraform/environments/$ENV_PATH" || { echo "Cannot cd into ${ROOT_DIR}/${path}"; exit 1; }
 terraform init -migrate-state \
@@ -21,3 +20,5 @@ terraform "$tf" \
     -var="artifact_registry_repository=$REPOSITORY_ID" \
     -var="image_uri=$IMAGE_URL" \
     $auto
+
+echo ""

@@ -15,3 +15,5 @@ cd "${ROOT_DIR}/terraform/environments/${ENV_PATH}/bootstrap" || { echo "Cannot 
 
 echo "***** Building ${ENV_PATH} boostrap infrastructure"
 terraform "$tf" $auto
+
+echo ""

@@ -15,3 +15,5 @@ echo "$TF_VAR_google_credentials_file_path"
 
 echo "***** Activating gcloud CLI"
 gcloud auth activate-service-account --key-file="$TF_VAR_google_credentials_file_path"
+
+echo ""
