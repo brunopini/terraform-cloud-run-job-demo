@@ -1,44 +1,44 @@
 #!/bin/bash
 
-echo "***** Fetching credentials, authenticating and configuring gcloud CLI"
-# Update below with appropriate credentials file path
-GOOGLE_APPLICATION_CREDENTIALS=".secrets/dem-prj-s-gsa-g-terraform.json"
+set -e
 
-echo ""
-echo "***** Authenticating gcloud CLI & building staging bootstrap infrasctruture"
-cd bootstrap || exit
-export TF_VAR_google_credentials_file_path="../../../../${GOOGLE_APPLICATION_CREDENTIALS}"
-terraform init
-terraform refresh
-PROJECT_ID=$(terraform output -raw project_id)
-ASSETS_BUCKET=$(terraform output -raw assets_bucket)
-REPOSITORY_BASE_URL=$(terraform output -raw registry_base_url)
-REPOSITORY_ID=$(terraform output -raw repository_id)
-gcloud auth activate-service-account \
-    --key-file="../../../../${GOOGLE_APPLICATION_CREDENTIALS}"
-gcloud services enable cloudresourcemanager.googleapis.com --project "${PROJECT_ID}"
-gcloud config set project "${PROJECT_ID}"
-terraform apply -auto-approve
+# Get the directory of the current script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
 
+echo "***** Starting build process"
 echo ""
-echo "***** Building and pushing images to remote repository"
-cd ../../../../code/demo-image || exit
-IMAGE_URI="${REPOSITORY_BASE_URL}/${PROJECT_ID}/${REPOSITORY_ID}/$(basename "$PWD"):latest"
-docker build -t "${IMAGE_URI}" .
-gcloud auth configure-docker "${REPOSITORY_BASE_URL}" --quiet
-docker push "${IMAGE_URI}"
 
+# Update with  environment name (matching `terraform/environments/`)
+source "$ROOT_DIR/bin/set_env.sh" --environment staging
 echo ""
-echo "***** Building main staging infrastrcuture"
-cd ../../terraform/environments/staging || exit
-export TF_VAR_google_credentials_file_path="../../../${GOOGLE_APPLICATION_CREDENTIALS}"
-terraform init -migrate-state \
-    -backend-config="bucket=${ASSETS_BUCKET}" \
-    -backend-config="credentials=../../../${GOOGLE_APPLICATION_CREDENTIALS}"
-terraform apply \
-    -var="artifact_registry_repository=${REPOSITORY_ID}" \
-    -var="image_uri=${IMAGE_URI}" \
-    -auto-approve
 
+# Update with credentials json file name in `.secrets/`
+source "$ROOT_DIR/bin/set_service_account_credentials.sh" \
+    --filename dem-prj-s-gsa-g-terraform.json
 echo ""
+
+source "$ROOT_DIR/bin/set_bootstrap_variables.sh"
+echo ""
+
+source "$ROOT_DIR/bin/enable_gcloud_cli.sh"
+echo ""
+
+# "apply" command passed to terraform and "--auto-approve" flag (must be) passed to terraform
+source "$ROOT_DIR/bin/terraform_bootstrap.sh" --terraform apply --auto-approve
+echo ""
+
+# Image name defaults to "--image-path" and label to latest (optional args available)
+source "$ROOT_DIR/bin/docker_image.sh" --docker build \
+    --image-path code/demo-image \
+    --image-name demo-image
+echo ""
+
+# "--quiet" flag (must be) passed to gcloud auth configure-docker
+source "$ROOT_DIR/bin/push_docker_image.sh" --quiet
+echo ""
+
+source "$ROOT_DIR/bin/terraform_main.sh" --terraform apply --auto-approve
+echo ""
+
 echo "***** Build process complete!"

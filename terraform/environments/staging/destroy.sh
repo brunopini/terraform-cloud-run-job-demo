@@ -1,52 +1,43 @@
 #!/bin/bash
 
-echo "***** Fetching credentials, authenticating and configuring gcloud CLI"
-# Update below with appropriate credentials file path
-GOOGLE_APPLICATION_CREDENTIALS=".secrets/dem-prj-s-gsa-g-terraform.json"
+set -e
 
-echo ""
-echo "***** Authenticating gcloud CLI & fetching project variables"
-cd bootstrap || exit
-export TF_VAR_google_credentials_file_path="../../../../${GOOGLE_APPLICATION_CREDENTIALS}"
-terraform init
-terraform refresh
-PROJECT_ID=$(terraform output -raw project_id)
-ASSETS_BUCKET=$(terraform output -raw assets_bucket)
-REPOSITORY_BASE_URL=$(terraform output -raw registry_base_url)
-REPOSITORY_ID=$(terraform output -raw repository_id)
-gcloud auth activate-service-account \
-    --key-file="../../../../${GOOGLE_APPLICATION_CREDENTIALS}"
+# Get the directory of the current script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
 
-cd ../../../../code/demo-image || exit
-IMAGE_URI="${REPOSITORY_BASE_URL}/${PROJECT_ID}/${REPOSITORY_ID}/$(basename "$PWD"):latest"
+echo "***** Starting destroy process"
+echo ""
 
+# Update with  environment name (matching `terraform/environments/`)
+source "$ROOT_DIR/bin/set_env.sh" -environment staging
 echo ""
-echo "***** Destroying main staging infrastrcuture"
-cd ../../terraform/environments/staging || exit
-export TF_VAR_google_credentials_file_path="../../../${GOOGLE_APPLICATION_CREDENTIALS}"
-terraform init -migrate-state \
-    -backend-config="bucket=${ASSETS_BUCKET}" \
-    -backend-config="credentials=../../../${GOOGLE_APPLICATION_CREDENTIALS}"
-terraform destroy \
-    -var="artifact_registry_repository=${REPOSITORY_ID}" \
-    -var="image_uri=${IMAGE_URI}" \
-    -auto-approve
 
+# Update with credentials json file name in `.secrets/`
+source "$ROOT_DIR/bin/set_service_account_credentials.sh" -filename dem-prj-s-gsa-g-terraform.json
 echo ""
-echo "***** Destroying staging bootstrap infrasctruture"
-cd bootstrap || exit
-export TF_VAR_google_credentials_file_path="../../../../${GOOGLE_APPLICATION_CREDENTIALS}"
-terraform destroy -auto-approve
-echo ""
-echo "***** You will need to delete the terraform state bucket, terraform service account, and project manually"
 
+source "$ROOT_DIR/bin/set_bootstrap_variables.sh"
 echo ""
-echo "***** Disabling Google Cloud Service APIs (you will need to disable the Service Usage API manually)"
-gcloud services disable cloudresourcemanager.googleapis.com --project "${PROJECT_ID}"
 
+source "$ROOT_DIR/bin/enable_gcloud_cli.sh"
 echo ""
-echo "***** Removing local Docker image"
-docker rmi -f "${IMAGE_URI}"
+
+# "destroy" command passed to terraform and "--auto-approve" flag (must be) passed to terraform
+source "$ROOT_DIR/bin/terraform_main.sh" --terraform destroy --auto-approve
+echo ""
+
+source "$ROOT_DIR/bin/terraform_bootstrap.sh" --terraform destroy --auto-approve
+echo ""
+
+# Image name defaults to "--image-path" and label to latest (optional args available)
+source "$ROOT_DIR/bin/docker_image.sh" --docker rmi \
+    --image-path code/demo-image \
+    --image-name demo-image
+echo ""
+
+source "$ROOT_DIR/bin/disable_gcloud_cli.sh"
+echo ""
 
 echo ""
 echo "***** Destroy process complete!"
