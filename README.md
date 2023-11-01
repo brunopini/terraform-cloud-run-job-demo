@@ -89,7 +89,7 @@ After the destruction is complete, you will still need to delete the original Cl
 
 - [x] Adding a `destroy.sh` process.
 - [ ] Improving `destroy.sh` process.
-- [ ] Adding a Secrets Manager environment to the Cloud Run container.
+- [x] Adding a Secrets Manager environment to the Cloud Run container.
 - [ ] Adding a Cloud Storage connection.
 - [ ] Adding VPC Peering functionality.
 - [ ] Tagging across all resources created.
