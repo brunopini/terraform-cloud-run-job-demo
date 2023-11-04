@@ -33,8 +33,6 @@ test.ipynb
 # VSCode
 .vscode
 
-# Github
-.github
-
 # Extra
 .DS_Store
+*.backup*
