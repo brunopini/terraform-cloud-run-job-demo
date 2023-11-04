@@ -32,7 +32,7 @@ if [ -z "$GITHUB_CREDENTIALS_PATH" ] && [ -n "$ghcreds" ]; then
 fi
 
 export TF_VAR_google_credentials_path="$GOOGLE_CREDENTIALS_PATH"
-echo "::set-output name=google_credentials_path::$GOOGLE_CREDENTIALS_PATH"
+echo "google_credentials_path=$GOOGLE_CREDENTIALS_PATH" >> "$GITHUB_ENV"
 
 if [ -z "$PROJECT_ID" ]; then
     PROJECT_ID=$(terraform output -raw project_id);
@@ -71,13 +71,17 @@ export TF_VAR_assets_bucket="$ASSETS_BUCKET"
 export TF_VAR_docker_repository_id="$REPOSITORY_ID"
 export TF_VAR_image_url="$IMAGE_URL"
 
+{
+        echo "project_id=$PROJECT_ID"
+        echo "assets_bucket=$ASSETS_BUCKET"
+        echo "repository_id=$REPOSITORY_ID"
+        echo "image_url=$IMAGE_URL"
+    } >> "$GITHUB_ENV"
+
 echo "::set-output name=project_id::$PROJECT_ID"
 echo "::set-output name=docker_repository_id::$REPOSITORY_ID"
 echo "::set-output name=image_url::$IMAGE_URL"
 echo "::set-output name=assets_bucket::$ASSETS_BUCKET"
-echo "::set-output name=github::$github"
-echo "::set-output name=github_token::$GITHUB_TOKEN"
-echo "::set-output name=ghcreds::$ghcreds"
 
 terraform init \
     -migrate-state \

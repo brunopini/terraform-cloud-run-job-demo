@@ -26,7 +26,7 @@ if [ -z "$GOOGLE_CREDENTIALS_PATH" ] && [ -n "$gcreds" ]; then
 fi
 
 export TF_VAR_google_credentials_path="$GOOGLE_CREDENTIALS_PATH"
-echo "::set-output name=google_credentials_path::$GOOGLE_CREDENTIALS_PATH"
+echo "google_credentials_path=$GOOGLE_CREDENTIALS_PATH" >> "$GITHUB_ENV"
 
 terraform init
 
@@ -50,9 +50,11 @@ if [ "$tf" != "destroy" ]; then
     export REPOSITORY_ID="$repository_id"
     export REGISTRY_ID="$registry_id"
 
-    echo "::set-output name=project_id::$PROJECT_ID"
-    echo "::set-output name=assets_bucket::$ASSETS_BUCKET"
-    echo "::set-output name=repository_base_url::$REPOSITORY_BASE_URL"
-    echo "::set-output name=repository_id::$REPOSITORY_ID"
-    echo "::set-output name=registry_id::$REGISTRY_ID"
+    {
+        echo "project_id=$PROJECT_ID"
+        echo "assets_bucket=$ASSETS_BUCKET"
+        echo "repository_base_url=$REPOSITORY_BASE_URL"
+        echo "repository_id=$REPOSITORY_ID"
+        echo "registry_id=$REGISTRY_ID"
+    } >> "$GITHUB_ENV"
 fi
