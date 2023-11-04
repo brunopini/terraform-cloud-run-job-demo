@@ -2,40 +2,54 @@
 
 set -e
 
-# Get the directory of the current script and export root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
+
+# Fill in!
+env="staging"
+gcreds="$ROOT_DIR/.secrets/dem-prj-s-gsa-g-terraform.json"
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -env|--environment) env="$2"; shift 2;;
+        -gcreds|--goog-credentials) gcreds="$2"; shift 2;;
+        *) echo "Unknown parameter passed: $1"; exit 1;;
+    esac
+done
+
+export ROOT_DIR="$ROOT_DIR"
+export ENV_PATH="$env"
+export GOOGLE_CREDENTIALS_PATH="$gcreds"
+
+echo "::set-output name=env_path::$ENV_PATH"
+echo "::set-output name=google_credentials_path::$GOOGLE_CREDENTIALS_PATH"
 
 echo "***** Starting destroy process"
-echo ""
 
-# Update with  environment name (matching `terraform/environments/`)
-source "$ROOT_DIR/bin/env_set.sh" \
-    --environment staging
+# Get outputs as variables
+source "$ROOT_DIR/bin/tf_main.sh" \
+    --terraform output
 
-# Update with credentials json file name in `.secrets/`
-source "$ROOT_DIR/bin/service_account_credentials_set.sh" \
-    --filename dem-prj-s-gsa-g-terraform.json
+# `--enable` or `--disable`
+source "$ROOT_DIR/bin/gcloud.sh" \
+    --enable
 
-source "$ROOT_DIR/bin/bootstrap_variables_set.sh"
-
-source "$ROOT_DIR/bin/gcloud_cli_enable.sh"
-
-# "destroy" command passed to terraform and "--auto-approve" flag (must be) passed to terraform
-source "$ROOT_DIR/bin/terraform_main.sh" \
+# `destroy` command passed to terraform and '--auto-approve' flag (must be) passed to terraform
+source "$ROOT_DIR/bin/tf_main.sh" \
     --terraform destroy \
     --auto-approve
 
-source "$ROOT_DIR/bin/terraform_bootstrap.sh" \
+source "$ROOT_DIR/bin/tf_base.sh" \
     --terraform destroy \
     --auto-approve
 
-# Image name defaults to "--image-path" and label to latest (optional args available)
-source "$ROOT_DIR/bin/docker_image.sh" \
+# Image name defaults to `--image-path` and label to latest (optional args available)
+source "$ROOT_DIR/bin/docker.sh" \
     --docker rmi \
-    --image-path code/demo-image \
+    --image-path demo-image \
     --image-name demo-image
 
-source "$ROOT_DIR/bin/gcloud_cli_disable.sh"
+source "$ROOT_DIR/bin/gcloud.sh" \
+    --disable
 
 echo "***** Destroy process complete!"

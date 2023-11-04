@@ -1,5 +1,6 @@
-variable "google_credentials_file_path" {
+variable "google_credentials_path" {
     type = string
+    description = "Path to JSON credentials file"
 }
 
 variable "project_id" {
@@ -8,10 +9,8 @@ variable "project_id" {
 
 variable "region" {
     type = string
-  default     = "us-central1"
 }
 
 variable "region_short" {
     type = string
-    default = "uscen1"
 }

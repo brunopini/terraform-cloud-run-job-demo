@@ -1,0 +1,97 @@
+name: Build and deploy staging
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+    paths:
+      - 'docker/demo-image/'
+      - 'terraform/environments/staging/'
+
+jobs:
+  set-enviornment-variables:
+    runs-on: ubuntu-latest
+    env:
+      ENV_PATH: staging
+      ROOT_DIR: $GITHUB_WORKSPACE
+    outputs:
+      ENV_PATH: ${{ steps.env.outputs.env_path }}
+      PROJECT_ID: ${{ steps.tf.outpus.project_id }}
+      ASSETS_BUCKET: ${{ steps.tf.outpus.assets_bucket }}
+      REPOSITORY_BASE_URL: ${{ steps.tf.outpus.repository_base_url }}
+      REPOSITORY_ID: ${{ steps.tf.outpus.repository_id }}
+    steps:
+      - name: Checkout repository
+          uses: actions/checkout@v2
+
+      - name: Set environment value
+        id: env
+        run: ./scripts/env_set.sh
+      - name: Export Terraform bootstrap variables
+        id: tf
+        run: ./scripts/bootstrap_variables_set.sh
+
+  build-and-push-docker:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'docker/')
+    needs: set-environment-variables
+    env:
+      PROJECT_ID: ${{ needs.set-environment-variables.outpus.PROJECT_ID }}
+      REPOSITORY_BASE_URL: ${{ needs.set-environment-variables.outpus.REPOSITORY_BASE_URL }}
+      REPOSITORY_ID: ${{ needs.set-environment-variables.outpus.REPOSITORY_ID }}
+      ROOT_DIR: $GITHUB_WORKSPACE
+    outputs:
+      IMAGE_URL: {{ $ steps.push-image.outputs.image_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up gloud
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Build and push Docker image
+        id: push-image
+        run: ./scripts/docker_image.sh --push --quiet
+        env:
+          DOCKER_CMD: build
+          IMAGE_PATH: demo-image
+          IMAGE_NAME: demo-image
+          IMAGE_LABEL: latest
+
+  # build-terraform-bootstrap:
+  #   runs-on: ubuntu-latest
+  #   if: contains(github.event.head_commit.modified, 'bootstrap/')
+  #   needs: set-environment-variables
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v2
+
+  #     - name: Build Terraform
+  #       run: ./scripts/terraform_bootstrap.sh -tf apply --auto-aprove
+  #       env:
+  #         ENV_PATH: ${{ needs.set-enviornment-variables.outputs.ENV_PATH }}
+  #         ROOT_DIR: $GITHUB_WORKSPACE
+
+  build-terraform-main:
+    runs-on: ubuntu-latest
+    if: >-
+      contains(github.event.head_commit.modified, 'terrafom/') ||
+      contains(github.event.head_commit.modified, 'docker/')
+    needs: set-enviornment-variables
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Terraform
+        run: ./scripts/terraform-build.sh -tf apply --auto-aprove
+        env:
+          ENV_PATH: ${{ needs.set-enviornment-variables.outputs.ENV_PATH }}
+          ASSETS_BUCKET: ${{ needs.set-enviornment-variables.outputs.ASSETS_BUCKET }}
+          TF_VAR_google_credentials_file: ${{ secrets.TF_CREDS_FILE }}
+          REPOSITORY_ID: ${{ needs.set-enviornment-variables.outputs.REPOSITORY_ID }}
+          ROOT_DIR: $GITHUB_WORKSPACE
