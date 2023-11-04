@@ -1,6 +1,6 @@
 variable "google_credentials_path" {
-    type = string
     description = "Path to JSON credentials file"
+    type = string
 }
 
 variable "project_id" {

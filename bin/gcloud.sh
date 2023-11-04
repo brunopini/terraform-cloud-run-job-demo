@@ -28,7 +28,7 @@ fi
 echo "***** $log Cloud Resource Manager API in $PROJECT_ID"
 
 gcloud auth activate-service-account --key-file="$gcreds"
-if [ "$cmd" == "destroy" ]; then
+if [ "$cmd" == "disable" ]; then
   gcloud services disable cloudresourcemanager.googleapis.com --project "$PROJECT_ID" --force
 else
   gcloud services $cmd cloudresourcemanager.googleapis.com --project "$PROJECT_ID"

@@ -6,6 +6,7 @@ terraform.tfstate*
 # Env
 venv/
 .python-version
+.env
 
 # CSVs
 *.csv
@@ -22,7 +23,7 @@ execution.log
 .secrets/*.yml
 .secrets/*.yaml
 .secrets/*.csv
-.env
+.secrets/*.env
 
 # Python
 __pycache__/

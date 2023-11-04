@@ -1,4 +1,4 @@
-# Migrate Artifact Registry repository state =============================
+# Import Artifact Registry repository state =============================
 resource "google_artifact_registry_repository" "docker" {
   location      = var.region
   repository_id = "${var.project_id}-arr-${var.region_short}-docker"

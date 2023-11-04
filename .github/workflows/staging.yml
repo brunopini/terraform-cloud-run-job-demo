@@ -15,8 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENV_PATH: staging
-      ROOT_DIR: $GITHUB_WORKSPACE
-      GOOGLE_CREDENTIALS_PATH: {{ secrets.google_credentials }}
+      ROOT_DIR: ${{ github.workspace }}
+      # GITHUB_TOKEN: {{ secrets.GITHUB_TOKEN }} passed implicitly
     steps:
-      - name: Fetch state
-        run: ./terraform/environments/staging/build.sh
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Google credentials
+        run: |
+          echo "${{ secrets.DEM_PRJ_S_GAS_G_TERRAFORM }}" > ${{ github.workspace }}/google-credentials.json
+          echo "GOOGLE_CREDENTIALS_PATH=${{ github.workspace }}/google-credentials.json" >> $GITHUB_ENV
+      - name: Push state
+        run: ./terraform/environments/$ENV_PATH/build.sh
