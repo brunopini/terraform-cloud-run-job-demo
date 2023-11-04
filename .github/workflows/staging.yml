@@ -5,8 +5,8 @@ on:
     branches:
       - main
       - staging
-      - component/github-actions
     paths:
+      - '.github/'
       - 'docker/demo-image/'
       - 'terraform/environments/staging/'
 
