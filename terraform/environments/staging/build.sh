@@ -2,41 +2,61 @@
 
 set -e
 
-# Get the directory of the current script and export root
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
+if [ -z "$ROOT_DIR" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
+fi
+
+# Fill in!
+env="${ENV_PATH:-staging}"
+gcreds="${GOOGLE_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/dem-prj-s-gsa-g-terraform.json}"
+first=""
+import=""
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -env|--environment) env="$2"; shift 2;;
+        -gcreds|--goog-credentials) gcreds="$2"; shift 2;;
+        -first|--first-build) first="--first-build"; shift 1;;
+        -import|--import-bucket) import="$2"; shift 2;;
+        *) echo "Unknown parameter passed: $1"; exit 1;;
+    esac
+done
+
+export ROOT_DIR="$ROOT_DIR"
+export ENV_PATH="$env"
+export GOOGLE_CREDENTIALS_PATH=$gcreds
 
 echo "***** Starting build process"
-echo ""
 
-# Update with  environment name (matching `terraform/environments/`)
-source "$ROOT_DIR/bin/env_set.sh" \
-    --environment staging
+# Reads output of main or base infrastructure
+if [ "$first" == "--first-build" ]; then
+    source "$ROOT_DIR/bin/base_var.sh";
+    source "$ROOT_DIR/bin/tf_main.sh" -tf output
+fi
 
-# Update with credentials json file name in `.secrets/`
-source "$ROOT_DIR/bin/service_account_credentials_set.sh" \
-    --filename dem-prj-s-gsa-g-terraform.json
+# `--enable` or `--disable`
+source "$ROOT_DIR/bin/gcloud.sh" --enable
 
-source "$ROOT_DIR/bin/bootstrap_variables_set.sh"
-
-source "$ROOT_DIR/bin/gcloud_cli_enable.sh"
-
-# "apply" command passed to terraform and "--auto-approve" flag (must be) passed to terraform
-source "$ROOT_DIR/bin/terraform_bootstrap.sh" \
+# `apply` command passed to terraform and '--auto-approve' flag (must be) passed to terraform
+source "$ROOT_DIR/bin/tf_base.sh" \
     --terraform apply \
+    ${import:+--import-bucket "$import"} \
     --auto-approve
 
-# Image name defaults to "--image-path" and label to latest (optional args available)
-# If "--push" is passed, Docker will push to repositoy, and "--quiet" flag must be passed
-source "$ROOT_DIR/bin/docker_image.sh" \
+# Image name defaults to `--image-path` and label to latest (optional args available)
+# If `--push` is passed, Docker will push to repositoy, and `--quiet` flag must be passed
+source "$ROOT_DIR/bin/docker.sh" \
     --docker build \
-    --image-path code/demo-image \
+    --image-path demo-image \
     --image-name demo-image \
     --push \
     --quiet
 
-source "$ROOT_DIR/bin/terraform_main.sh" \
+# `--first-build` will import artifact registry created by base
+source "$ROOT_DIR/bin/tf_main.sh" \
     --terraform apply \
+    $first \
     --auto-approve
 
 echo "***** Build process complete!"

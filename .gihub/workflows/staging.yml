@@ -1,0 +1,22 @@
+name: Build and deploy staging
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - component/github-actions
+    paths:
+      - 'docker/demo-image/'
+      - 'terraform/environments/staging/'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ENV_PATH: staging
+      ROOT_DIR: $GITHUB_WORKSPACE
+      GOOGLE_CREDENTIALS_PATH: {{ secrets.google_credentials }}
+    steps:
+      - name: Fetch state
+        run: ./terraform/environments/staging/build.sh

@@ -1,6 +1,3 @@
 project_id = "dem-prj-s"
-env_prefix = "s"
 region = "us-central1"
 region_short = "uscen1"
-subnet_cidr = "10.0.15.0/24"
-job_schedule = "0 0 * * *"

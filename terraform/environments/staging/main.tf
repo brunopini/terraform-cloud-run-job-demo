@@ -1,3 +1,10 @@
+# Migrate Artifact Registry repository state =============================
+resource "google_artifact_registry_repository" "docker" {
+  location      = var.region
+  repository_id = "${var.project_id}-arr-${var.region_short}-docker"
+  format        = "DOCKER"
+}
+
 # Cloud Run Job ==========================================================
 resource "google_cloud_run_v2_job" "job" {
   name = "${var.project_id}-crj-${var.region_short}-demojob"
@@ -7,7 +14,7 @@ resource "google_cloud_run_v2_job" "job" {
   template {
     template {
       containers {
-        image = var.image_uri
+        image = var.image_url
 
         env {
           name = "GOOGLE_APPLICATION_CREDENTIALS_JSON"
@@ -58,7 +65,7 @@ resource "google_service_account" "job_sa" {
 resource "google_artifact_registry_repository_iam_member" "artifact_registry_reader" {
   location = var.region
   project  = var.project_id
-  repository = var.artifact_registry_repository
+  repository = google_artifact_registry_repository.docker.repository_id
   role    = "roles/artifactregistry.reader"
   member  = "serviceAccount:${google_service_account.job_sa.email}"
 }
@@ -76,7 +83,7 @@ resource "google_compute_subnetwork_iam_member" "compute_network_user" {
   member     = "serviceAccount:${google_service_account.job_sa.email}"
 }
 
-# Cloud Scheduler=========================================================
+# Cloud Scheduler ========================================================
 resource "google_cloud_scheduler_job" "scheduler" {
   name     = "${var.project_id}-sch-g-scheduler"
   region   = var.region
