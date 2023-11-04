@@ -109,7 +109,8 @@ After the destruction is complete, you will still need to delete the original Cl
 - [x] Adding a `destroy.sh` process.
 - [x] Improving `build.sh` and `destroy.sh` processes.
 - [x] Adding a Secrets Manager environment to the Cloud Run container.
-- [ ] Creating GitHub Workflows for CI/CD.
+- [x] Creating Github Workflows for CI/CD.
+- [ ] Expand and modularize Github Worflows.
 - [ ] Adding a Cloud Storage connection.
 - [ ] Adding a Cloud Run Service with a public IP.
 - [ ] Adding VPC Peering functionality.
