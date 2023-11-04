@@ -29,3 +29,19 @@ resource "github_actions_secret" "terraform" {
 
   depends_on =[google_service_account_key.github[0]]
 }
+
+resource "github_actions_secret" "assets_bucket" {
+  count = var.create_github_resources ? 1 : 0
+
+  repository       = var.github_repository
+  secret_name      = "ASSETS_BUCKET"
+  plaintext_value  = var.assets_bucket
+}
+
+resource "github_actions_secret" "terraform_name" {
+  count = var.create_github_resources ? 1 : 0
+
+  repository       = var.github_repository
+  secret_name      = "TERRAFORM_SECRET_NAME"
+  plaintext_value  = local.github_terraform_secret_name
+}

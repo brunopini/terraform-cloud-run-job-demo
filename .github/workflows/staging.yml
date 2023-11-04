@@ -16,6 +16,7 @@ jobs:
     env:
       ENV_PATH: staging
       ROOT_DIR: ${{ github.workspace }}
+      ASSETS_BUCKET: ${{ secrets.ASSETS_BUCKET }}
       # GITHUB_TOKEN: {{ secrets.GITHUB_TOKEN }} passed implicitly
     steps:
       - name: Checkout code

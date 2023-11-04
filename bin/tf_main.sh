@@ -34,6 +34,17 @@ fi
 export TF_VAR_google_credentials_path="$GOOGLE_CREDENTIALS_PATH"
 echo "google_credentials_path=$GOOGLE_CREDENTIALS_PATH" >> "$GITHUB_ENV"
 
+if [ -z "$PROJECT_ID" ] ||
+    [ -z "$ASSETS_BUCKET" ] ||
+    [ -z "$REGISTRY_ID" ] ||
+    [ -z "$REPOSITORY_ID" ] ||
+    [ -z "$IMAGE_URL" ]; then
+        terraform init \
+            -migrate-state \
+            -backend-config="bucket=$ASSETS_BUCKET" \
+            -backend-config="credentials=$GOOGLE_CREDENTIALS_PATH"
+fi
+
 if [ -z "$PROJECT_ID" ]; then
     PROJECT_ID=$(terraform output -raw project_id);
 fi

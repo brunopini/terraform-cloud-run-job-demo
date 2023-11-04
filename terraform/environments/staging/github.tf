@@ -6,4 +6,6 @@ module "github" {
     project_id = var.project_id
     region = var.region
     github_repository = var.github_repository
+
+    assets_bucket = var.assets_bucket
 }
