@@ -31,6 +31,7 @@ echo "::set-output name=google_credentials_path::$GOOGLE_CREDENTIALS_PATH"
 terraform init
 
 if [ -n "$import" ]; then
+    echo "importing bucket $import"
     terraform import google_storage_bucket.terraform_state "$import"
 fi
 

@@ -10,13 +10,16 @@ fi
 # Fill in!
 env="${ENV_PATH:-staging}"
 gcreds="${GOOGLE_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/dem-prj-s-gsa-g-terraform.json}"
+ghcreds="${GITHUB_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/github.env}"
+github=false
 first=""
 import=""
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -env|--environment) env="$2"; shift 2;;
-        -gcreds|--goog-credentials) gcreds="$2"; shift 2;;
+        -gcreds|--google-credentials) gcreds="$2"; shift 2;;
+        -github|--github-actions) github=true; shift 1;;
         -first|--first-build) first="--first-build"; shift 1;;
         -import|--import-bucket) import="$2"; shift 2;;
         *) echo "Unknown parameter passed: $1"; exit 1;;
@@ -27,11 +30,15 @@ export ROOT_DIR="$ROOT_DIR"
 export ENV_PATH="$env"
 export GOOGLE_CREDENTIALS_PATH=$gcreds
 
+if [ "$github" == true ] && [ -z "$GITHUB_TOKEN" ]; then
+    export GITHUB_CREDENTIALS_PATH="$ghcreds"
+fi
+
 echo "***** Starting build process"
 
 # Reads output of main or base infrastructure
 if [ "$first" == "--first-build" ]; then
-    source "$ROOT_DIR/bin/base_var.sh";
+    source "$ROOT_DIR/bin/base_var.sh"; else
     source "$ROOT_DIR/bin/tf_main.sh" -tf output
 fi
 
@@ -54,6 +61,7 @@ source "$ROOT_DIR/bin/docker.sh" \
     --quiet
 
 # `--first-build` will import artifact registry created by base
+# `--github-resources` will create a github google service account secret
 source "$ROOT_DIR/bin/tf_main.sh" \
     --terraform apply \
     $first \

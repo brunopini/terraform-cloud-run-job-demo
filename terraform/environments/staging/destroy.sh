@@ -8,14 +8,21 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
 # Fill in!
 env="staging"
 gcreds="$ROOT_DIR/.secrets/dem-prj-s-gsa-g-terraform.json"
+ghcreds="${GITHUB_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/github.env}"
+github=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -env|--environment) env="$2"; shift 2;;
         -gcreds|--goog-credentials) gcreds="$2"; shift 2;;
+        -github|--github-actions) github=true; shift 1;;
         *) echo "Unknown parameter passed: $1"; exit 1;;
     esac
 done
+
+if [ "$github" == true ] && [ -z "$GITHUB_TOKEN" ]; then
+    export GITHUB_CREDENTIALS_PATH="$ghcreds"
+fi
 
 export ROOT_DIR="$ROOT_DIR"
 export ENV_PATH="$env"

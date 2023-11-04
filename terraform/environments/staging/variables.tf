@@ -1,6 +1,6 @@
 variable "google_credentials_path" {
-    type = string
     description = "Path to JSON credentials file"
+    type = string
 }
 
 variable "env_prefix" {
@@ -37,4 +37,15 @@ variable "image_url" {
 
 variable "job_schedule" {
     type = string
+}
+
+variable "create_github_resources" {
+  description = "Whether to create the GitHub service account and pass json key to Github Secrets"
+  type        = bool
+  default     = false
+}
+
+variable "github_repository" {
+    type = string
+    default ="my-github-repository"
 }
