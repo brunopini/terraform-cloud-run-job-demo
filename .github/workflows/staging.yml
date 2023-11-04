@@ -9,6 +9,7 @@ on:
       - '.github/'
       - 'docker/demo-image/'
       - 'terraform/environments/staging/'
+    workflow_dispatch:
 
 jobs:
   build:
