@@ -9,16 +9,16 @@ jobs:
     env:
       ENV_PATH: staging
       ROOT_DIR: ${{ github.workspace }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
       ASSETS_BUCKET: ${{ secrets.ASSETS_BUCKET }}
-      TERRAFORM_SECRET_NAME: DEM_PRJ_S_GAS_G_TERRAFORM
+      TERRAFORM_SECRET_NAME: ${{ secrets.TERRAFORM_SECRET_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Google credentials
         env:
-          TERRAFORM_SECRET: ${{ secrets.DEM_PRJ_S_GAS_G_TERRAFORM }}
+            TERRAFORM_SECRET: ${{ env.TERRAFORM_SECRET_NAME }}
         run: |
           echo -n "${TERRAFORM_SECRET}" > "${ROOT_DIR}/google-credentials.json"
           echo "GOOGLE_CREDENTIALS_PATH=${ROOT_DIR}/google-credentials.json" >> $GITHUB_ENV
