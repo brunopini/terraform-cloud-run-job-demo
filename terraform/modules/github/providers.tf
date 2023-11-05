@@ -20,6 +20,6 @@ terraform {
 #   region      = var.region
 # }
 
-# provider "github" {
-#   # implicitly passed via env variable GITHUB_TOKEN
-# }
+provider "github" {
+  # implicitly passed via env variable GITHUB_TOKEN
+}
