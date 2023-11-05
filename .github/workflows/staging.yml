@@ -33,6 +33,7 @@ jobs:
       - name: Push state
         env:
           GOOGLE_CREDENTIALS_PATH: ${{ env.GOOGLE_CREDENTIALS_PATH }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
         run: |
           chmod +x "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
           "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh" --github-actions
