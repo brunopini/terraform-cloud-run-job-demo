@@ -28,8 +28,13 @@ export ROOT_DIR="$ROOT_DIR"
 export ENV_PATH="$env"
 export GOOGLE_CREDENTIALS_PATH="$gcreds"
 
-echo "::set-output name=env_path::$ENV_PATH"
-echo "::set-output name=google_credentials_path::$GOOGLE_CREDENTIALS_PATH"
+
+if [ -n "$GITHUB_ENV" ]; then
+    {
+        echo "env_path=$ENV_PATH"
+        echo "google_credentials_path=$GOOGLE_CREDENTIALS_PATH"
+    } >> "$GITHUB_ENV"
+fi
 
 echo "***** Starting destroy process"
 

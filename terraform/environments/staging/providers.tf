@@ -6,6 +6,11 @@ terraform {
       source  = "hashicorp/google"
       version = "5.3.0"
     }
+
+    github = {
+      source  = "integrations/github"
+      version = "5.41"
+    }
   }
 
   backend "gcs" {
@@ -15,7 +20,6 @@ terraform {
 }
 
 provider "google" {
-  alias = "provider"
   credentials = var.google_credentials_path
   project     = var.project_id
   region      = var.region
