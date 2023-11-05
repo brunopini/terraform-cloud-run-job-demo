@@ -15,6 +15,7 @@ terraform {
 }
 
 provider "google" {
+  alias = "provider"
   credentials = var.google_credentials_path
   project     = var.project_id
   region      = var.region
