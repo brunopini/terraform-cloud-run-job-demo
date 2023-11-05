@@ -25,7 +25,7 @@ resource "github_actions_secret" "terraform" {
 
   repository       = var.github_repository
   secret_name      = local.github_terraform_secret_name
-  plaintext_value  = base64decode(google_service_account_key.github[0].private_key)
+  plaintext_value  = google_service_account_key.github[0].private_key
 
   depends_on =[google_service_account_key.github[0]]
 }
