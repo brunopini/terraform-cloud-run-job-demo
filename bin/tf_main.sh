@@ -79,7 +79,7 @@ if [ -z "$IMAGE_URL" ]; then
     export IMAGE_URL="$IMAGE_URL"
 fi
 if [ -n "$GITHUB_TOKEN" ]; then
-    github=$(terraform output -raw create_github_resources)
+    github=true
 fi
 
 
