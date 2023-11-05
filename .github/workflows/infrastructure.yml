@@ -12,6 +12,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+      secrets: write
     env:
       ENV_PATH: staging
       ROOT_DIR: ${{ github.workspace }}
