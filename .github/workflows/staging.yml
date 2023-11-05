@@ -17,7 +17,7 @@ jobs:
       ENV_PATH: staging
       ROOT_DIR: ${{ github.workspace }}
       ASSETS_BUCKET: ${{ secrets.ASSETS_BUCKET }}
-      TERRAFORM_SECRET_NAME: ${{ secrets.TERRAFORM_SECRET_NAME }}
+      TERRAFORM_SECRET_NAME: DEM_PRJ_S_GAS_G_TERRAFORM
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
