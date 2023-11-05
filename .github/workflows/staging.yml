@@ -16,6 +16,7 @@ jobs:
     env:
       ENV_PATH: staging
       ROOT_DIR: ${{ github.workspace }}
+      GITHUB_TOKEN: ${{ secrets.GIHUB_TOKEN }}
       ASSETS_BUCKET: ${{ secrets.ASSETS_BUCKET }}
       TERRAFORM_SECRET_NAME: DEM_PRJ_S_GAS_G_TERRAFORM
     steps:
