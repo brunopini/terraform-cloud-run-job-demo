@@ -26,7 +26,9 @@ if [ -z "$GOOGLE_CREDENTIALS_PATH" ] && [ -n "$gcreds" ]; then
 fi
 
 export TF_VAR_google_credentials_path="$GOOGLE_CREDENTIALS_PATH"
-echo "google_credentials_path=$GOOGLE_CREDENTIALS_PATH" >> "$GITHUB_ENV"
+if [ -n "$GITHUB_ENV" ]; then
+    echo "google_credentials_path=$GOOGLE_CREDENTIALS_PATH" >> "$GITHUB_ENV"
+fi
 
 terraform init
 
@@ -40,21 +42,23 @@ terraform "$tf" $auto
 if [ "$tf" != "destroy" ]; then
     project_id=$(terraform output -raw project_id)
     assets_bucket=$(terraform output -raw assets_bucket)
-    repository_base_url=$(terraform output -raw registry_base_url)
+    registry_base_url=$(terraform output -raw registry_base_url)
     repository_id=$(terraform output -raw repository_id)
     registry_id=$(terraform output -raw registry_id 2>/dev/null)
 
     export PROJECT_ID="$project_id"
     export ASSETS_BUCKET="$assets_bucket"
-    export REPOSITORY_BASE_URL="$repository_base_url"
+    export REGISTRY_BASE_URL="$registry_base_url"
     export REPOSITORY_ID="$repository_id"
     export REGISTRY_ID="$registry_id"
 
-    {
-        echo "project_id=$PROJECT_ID"
-        echo "assets_bucket=$ASSETS_BUCKET"
-        echo "repository_base_url=$REPOSITORY_BASE_URL"
-        echo "repository_id=$REPOSITORY_ID"
-        echo "registry_id=$REGISTRY_ID"
-    } >> "$GITHUB_ENV"
+    if [ -n "$GITHUB_ENV" ]; then
+        {
+            echo "project_id=$PROJECT_ID"
+            echo "assets_bucket=$ASSETS_BUCKET"
+            echo "registry_base_url=$REGISTRY_BASE_URL"
+            echo "repository_id=$REPOSITORY_ID"
+            echo "registry_id=$REGISTRY_ID"
+        } >> "$GITHUB_ENV"
+    fi
 fi

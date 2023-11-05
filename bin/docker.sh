@@ -42,8 +42,10 @@ case "$cmd" in
 esac
 
 cd "$ROOT_DIR/docker/${path}" || { echo "Cannot cd into $ROOT_DIR/docker/${path}"; exit 1; }
-export IMAGE_URL="$REPOSITORY_BASE_URL/$PROJECT_ID/$REPOSITORY_ID/$name:$label"
-echo "::set-output name=image_url::$IMAGE_URL"
+export IMAGE_URL="$REGISTRY_BASE_URL/$PROJECT_ID/$REPOSITORY_ID/$name:$label"
+if [ -n "$GITHUB_ENV" ]; then
+    echo "image_url=$IMAGE_URL" >> "$GITHUB_ENV"
+fi
 
 echo "***** $log docker image from [$ROOT_DIR/docker/$path]"
 echo "with name [$name], label [$label], and tag [$IMAGE_URL]"
@@ -51,6 +53,6 @@ docker "$cmd" $flag "$IMAGE_URL" . || { echo "Docker command failed"; exit 1; }
 
 if [ "$push" == true ]; then
     echo "***** Authenticating remote docker repository and pushing [$IMAGE_URL]"
-    gcloud auth configure-docker "$REPOSITORY_BASE_URL" $quiet
+    gcloud auth configure-docker "$REGISTRY_BASE_URL" $quiet
     docker push "$IMAGE_URL"
 fi

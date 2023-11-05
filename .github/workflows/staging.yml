@@ -17,13 +17,18 @@ jobs:
       ENV_PATH: staging
       ROOT_DIR: ${{ github.workspace }}
       ASSETS_BUCKET: ${{ secrets.ASSETS_BUCKET }}
+      TERRAFORM_SECRET_NAME: ${{ secrets.TERRAFORM_SECRET_NAME }}
       # GITHUB_TOKEN: {{ secrets.GITHUB_TOKEN }} passed implicitly
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Set up Google credentials
+        env:
+          TERRAFORM_SECRET: {{ secrets[env.TERRAFORM_SECRET_NAME] }}
         run: |
-          echo "${{ secrets.DEM_PRJ_S_GAS_G_TERRAFORM }}" > ${{ github.workspace }}/google-credentials.json
-          echo "GOOGLE_CREDENTIALS_PATH=${{ github.workspace }}/google-credentials.json" >> $GITHUB_ENV
+          echo "${TERRAFORM_SECRET}" > "${ROOT_DIR}/google-credentials.json"
+          echo "GOOGLE_CREDENTIALS_PATH="${ROOT_DIR}/google-credentials.json" >> $GITHUB_ENV
       - name: Push state
-        run: ./terraform/environments/$ENV_PATH/build.sh
+        run: |
+          chmod +x "{$ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
+          "{$ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"

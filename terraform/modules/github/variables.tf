@@ -11,6 +11,10 @@ variable "region" {
     type = string
 }
 
+variable "assets_bucket" {
+    type = string
+}
+
 variable "create_github_resources" {
   description = "Whether to create the GitHub service account and pass json key to Github Secrets"
   type        = bool

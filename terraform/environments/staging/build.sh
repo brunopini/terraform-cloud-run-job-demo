@@ -11,17 +11,21 @@ fi
 env="${ENV_PATH:-staging}"
 gcreds="${GOOGLE_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/dem-prj-s-gsa-g-terraform.json}"
 ghcreds="${GITHUB_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/github.env}"
+assets="$ASSETS_BUCKET"
 github=false
 first=""
 import=""
+base=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -env|--environment) env="$2"; shift 2;;
         -gcreds|--google-credentials) gcreds="$2"; shift 2;;
+        -assets|--assets-bucket) assets="$2"; shift 2;;
         -github|--github-actions) github=true; shift 1;;
         -first|--first-build) first="--first-build"; shift 1;;
         -import|--import-bucket) import="$2"; shift 2;;
+        -base|--terraform-base) base=true; shift 2;;
         *) echo "Unknown parameter passed: $1"; exit 1;;
     esac
 done
@@ -34,6 +38,10 @@ if [ "$github" == true ] && [ -z "$GITHUB_TOKEN" ]; then
     export GITHUB_CREDENTIALS_PATH="$ghcreds"
 fi
 
+if [ -z "$ASSETS_BUCKET" ] && [ -n "$assets" ]; then
+    export ASSETS_BUCKET="$assets"
+fi
+echo "$ASSETS_BUCKET"
 echo "***** Starting build process"
 
 # Reads output of main or base infrastructure
@@ -46,10 +54,12 @@ fi
 source "$ROOT_DIR/bin/gcloud.sh" --enable
 
 # `apply` command passed to terraform and '--auto-approve' flag (must be) passed to terraform
-source "$ROOT_DIR/bin/tf_base.sh" \
-    --terraform apply \
-    ${import:+--import-bucket "$import"} \
-    --auto-approve
+if [ -n "$first" ] || [ "$base" == true ]; then
+    source "$ROOT_DIR/bin/tf_base.sh" \
+        --terraform apply \
+        ${import:+--import-bucket "$import"} \
+        --auto-approve
+fi
 
 # Image name defaults to `--image-path` and label to latest (optional args available)
 # If `--push` is passed, Docker will push to repositoy, and `--quiet` flag must be passed
