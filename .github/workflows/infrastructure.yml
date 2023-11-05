@@ -22,9 +22,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Get Terraform Secret Name
+        run: |
+          TERRAFORM_SECRET=$(echo ${{ secrets[$TERRAFORM_SECRET_NAME] }})
+          echo "TERRAFORM_SECRET=$TERRAFORM_SECRET" >> $GITHUB_ENV
+        
+
       - name: Set up Google credentials
-        env:
-          TERRAFORM_SECRET: ${{ env.TERRAFORM_SECRET_NAME }}
         run: |
           echo -n "${TERRAFORM_SECRET}" > "${ROOT_DIR}/google-credentials.json"
           echo "GOOGLE_CREDENTIALS_PATH=${ROOT_DIR}/google-credentials.json" >> $GITHUB_ENV
