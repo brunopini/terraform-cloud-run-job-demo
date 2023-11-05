@@ -13,4 +13,5 @@ module "github" {
     github_repository = var.github_repository
 
     assets_bucket = var.assets_bucket
+    git_pat_token = var.git_pat_token
 }

@@ -50,7 +50,8 @@ variable "github_repository" {
     default ="my-github-repository"
 }
 
-variable "github_token" {
+variable "git_pat_token" {
+    description = "Your Github Private Access Token"
     type = string
     default =""
 }

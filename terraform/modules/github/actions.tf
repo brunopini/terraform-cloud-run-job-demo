@@ -1,3 +1,4 @@
+# Google Cloud resources =================================================
 resource "google_service_account" "github" {
   count = var.create_github_resources ? 1 : 0
 
@@ -20,6 +21,7 @@ resource "google_service_account_key" "github" {
   private_key_type    = "TYPE_GOOGLE_CREDENTIALS_FILE"
 }
 
+# Github Secrets =========================================================
 resource "github_actions_secret" "terraform" {
   count = var.create_github_resources ? 1 : 0
 
@@ -28,6 +30,14 @@ resource "github_actions_secret" "terraform" {
   plaintext_value  = base64decode(google_service_account_key.github[0].private_key)
 
   depends_on =[google_service_account_key.github[0]]
+}
+
+resource "github_actions_secret" "github_token" {
+  count = var.create_github_resources ? 1 : 0
+
+  repository       = var.github_repository
+  secret_name      = "GIT_PAT_TOKEN"
+  plaintext_value  = var.git_pat_token
 }
 
 resource "github_actions_secret" "assets_bucket" {

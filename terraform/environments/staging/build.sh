@@ -50,9 +50,10 @@ fi
 export ROOT_DIR="$ROOT_DIR"
 export ENV_PATH="$env"
 export GOOGLE_CREDENTIALS_PATH=$gcreds
+export ASSETS_BUCKET=$ASSETS_BUCKET
 export GITHUB_RESOURCES=$github
 export GITHUB_CREDENTIALS_PATH=$ghcreds
-export ASSETS_BUCKET=$ASSETS_BUCKET
+export GITHUB_TOKEN=$GITHUB_TOKEN
 
 echo "***** Starting build process"
 

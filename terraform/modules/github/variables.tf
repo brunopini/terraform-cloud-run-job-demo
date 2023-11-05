@@ -24,3 +24,9 @@ variable "create_github_resources" {
 variable "github_repository" {
     description = "Github repository ID to pass secrets into"
 }
+
+variable "git_pat_token" {
+    description = "Your Github Private Access Token"
+    type = string
+    default =""
+}

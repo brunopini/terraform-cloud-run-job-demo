@@ -12,14 +12,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      actions: write
-      secrets: write
     env:
       ENV_PATH: staging
       ROOT_DIR: ${{ github.workspace }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
       ASSETS_BUCKET: ${{ secrets.ASSETS_BUCKET }}
       TERRAFORM_SECRET_NAME: DEM_PRJ_S_GAS_G_TERRAFORM
     steps:
@@ -36,7 +32,7 @@ jobs:
       - name: Build
         env:
           GOOGLE_CREDENTIALS_PATH: ${{ env.GOOGLE_CREDENTIALS_PATH }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
         run: |
           chmod +x "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
           "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh" --github-actions --skip-docker
