@@ -32,6 +32,7 @@ jobs:
       - name: Build
         env:
           GOOGLE_CREDENTIALS_PATH: ${{ env.GOOGLE_CREDENTIALS_PATH }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
           "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh" --github-actions --skip-docker
