@@ -1,9 +1,10 @@
 module "github" {
     source = "../../modules/github"
 
-    # providers = {
-    #     google = google
-    # }
+    providers = {
+        google = google
+        github = github
+    }
 
     create_github_resources=var.create_github_resources
     google_credentials_path=var.google_credentials_path
