@@ -25,10 +25,16 @@ if [ -z "$GOOGLE_CREDENTIALS_PATH" ] && [ -n "$gcreds" ]; then
     GOOGLE_CREDENTIALS_PATH="$gcreds"
 fi
 
-export TF_VAR_google_credentials_path="$GOOGLE_CREDENTIALS_PATH"
-if [ -n "$GITHUB_ENV" ]; then
-    echo "google_credentials_path=$GOOGLE_CREDENTIALS_PATH" >> "$GITHUB_ENV"
+source "${ROOT_DIR}/bin/_github_env.sh"
+
+export GOOGLE_CREDENTIALS_PATH=$GOOGLE_CREDENTIALS_PATH
+export TF_VAR_google_credentials_path=$GOOGLE_CREDENTIALS_PATH
+
+if [ -z "$PROJECT_ID" ]; then
+        source ${ROOT_DIR}/bin/_read_project_id.sh
 fi
+
+source "${ROOT_DIR}/bin/_gcloud.sh" --enable
 
 terraform init
 
@@ -52,13 +58,7 @@ if [ "$tf" != "destroy" ]; then
     export REPOSITORY_ID="$repository_id"
     export REGISTRY_ID="$registry_id"
 
-    if [ -n "$GITHUB_ENV" ]; then
-        {
-            echo "project_id=$PROJECT_ID"
-            echo "assets_bucket=$ASSETS_BUCKET"
-            echo "registry_base_url=$REGISTRY_BASE_URL"
-            echo "repository_id=$REPOSITORY_ID"
-            echo "registry_id=$REGISTRY_ID"
-        } >> "$GITHUB_ENV"
-    fi
+    source "${ROOT_DIR}/bin/_github_env.sh"
+else
+    source "${ROOT_DIR}/bin/_gcloud.sh" --disable
 fi

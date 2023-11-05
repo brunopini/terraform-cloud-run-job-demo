@@ -35,7 +35,7 @@ jobs:
           GOOGLE_CREDENTIALS_PATH: ${{ env.GOOGLE_CREDENTIALS_PATH }}
         run: |
           chmod +x "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
-          "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
+          "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh" --github-actions
 
 
 
