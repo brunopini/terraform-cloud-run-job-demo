@@ -7,8 +7,6 @@ on:
     paths:
       - 'terraform/environments/staging/**'
       - '!terraform/environments/staging/base/**'
-    paths-ignore:
-      - 'terraform/environments/staging/base/**'
   workflow_dispatch:
 
 jobs:
