@@ -44,6 +44,7 @@ fi
 
 echo "$GOOGLE_CREDENTIALS_PATH"
 cat "$GOOGLE_CREDENTIALS_PATH"
+echo "test"
 
 if [ -z "$PROJECT_ID" ] ||
     [ -z "$ASSETS_BUCKET" ] ||
