@@ -30,6 +30,8 @@ jobs:
           echo "GOOGLE_CREDENTIALS_PATH=${ROOT_DIR}/google-credentials.json" >> $GITHUB_ENV
 
       - name: Push state
+        env:
+          GOOGLE_CREDENTIALS_PATH: {{ env.GOOGLE_CREDENTIALS_PATH }}
         run: |
           chmod +x "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
           "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
