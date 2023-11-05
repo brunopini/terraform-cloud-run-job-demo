@@ -16,16 +16,14 @@ jobs:
       ROOT_DIR: ${{ github.workspace }}
       GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
       ASSETS_BUCKET: ${{ secrets.ASSETS_BUCKET }}
-      TERRAFORM_SECRET_NAME: ${{ secrets.TERRAFORM_SECRET_NAME }}
+      TERRAFORM_KEY: ${{ secrets.TERRAFORM_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Google credentials
-        env:
-          TERRAFORM_SECRET: ${{ env.TERRAFORM_SECRET_NAME }}
         run: |
-          echo -n "${TERRAFORM_SECRET}" > "${ROOT_DIR}/google-credentials.json"
+          echo -n "${TERRAFORM_KEY}" > "${ROOT_DIR}/google-credentials.json"
           echo "GOOGLE_CREDENTIALS_PATH=${ROOT_DIR}/google-credentials.json" >> $GITHUB_ENV
 
       - name: Build
