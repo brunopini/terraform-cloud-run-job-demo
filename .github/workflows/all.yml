@@ -1,4 +1,4 @@
-name: Build and deploy complete infrastructure
+name: Build and deploy all
 
 on:
   workflow_dispatch:
@@ -20,6 +20,7 @@ jobs:
         run: |
           echo -n "${TERRAFORM_KEY}" > "${ROOT_DIR}/google-credentials.json"
           echo "GOOGLE_CREDENTIALS_PATH=${ROOT_DIR}/google-credentials.json" >> $GITHUB_ENV
+        shell: bash
 
       - name: Build
         env:
@@ -27,3 +28,4 @@ jobs:
         run: |
           chmod +x "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh"
           "${ROOT_DIR}/terraform/environments/${ENV_PATH}/build.sh" --github-actions
+        shell: bash
