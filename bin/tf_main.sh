@@ -42,6 +42,9 @@ if [ -n "$GITHUB_ENV" ]; then
     echo "google_credentials_path=$GOOGLE_CREDENTIALS_PATH" >> "$GITHUB_ENV"
 fi
 
+echo "$GOOGLE_CREDENTIALS_PATH"
+cat "$GOOGLE_CREDENTIALS_PATH"
+
 if [ -z "$PROJECT_ID" ] ||
     [ -z "$ASSETS_BUCKET" ] ||
     [ -z "$REGISTRY_BASE_URL" ] ||
