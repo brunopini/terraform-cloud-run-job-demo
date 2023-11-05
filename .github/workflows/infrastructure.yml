@@ -24,7 +24,7 @@ jobs:
 
       - name: Get Terraform Secret Name
         run: |
-          TERRAFORM_SECRET=$(echo ${{ secrets[$TERRAFORM_SECRET_NAME] }})
+          TERRAFORM_SECRET=$(echo ${{ secrets[env.TERRAFORM_SECRET_NAME] }})
           echo "TERRAFORM_SECRET=$TERRAFORM_SECRET" >> $GITHUB_ENV
         
 
