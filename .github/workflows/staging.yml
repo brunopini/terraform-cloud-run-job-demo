@@ -26,8 +26,9 @@ jobs:
         env:
           TERRAFORM_SECRET: ${{ secrets[env.TERRAFORM_SECRET_NAME] }}
         run: |
-          echo "${TERRAFORM_SECRET}" > "${ROOT_DIR}/google-credentials.json"
+          echo -n "${TERRAFORM_SECRET}" > "${ROOT_DIR}/google-credentials.json"
           echo "GOOGLE_CREDENTIALS_PATH=${ROOT_DIR}/google-credentials.json" >> $GITHUB_ENV
+          cat "${ROOT_DIR}/google-credentials.json"
 
       - name: Push state
         env:
