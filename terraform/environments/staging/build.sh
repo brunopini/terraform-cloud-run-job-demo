@@ -16,6 +16,7 @@ github=$GITHUB_RESOURCES
 frombase=""
 import=""
 skipdocker=false
+dockeronly=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -25,7 +26,8 @@ while [[ "$#" -gt 0 ]]; do
         -github|--github-actions) github=true; shift 1;;
         -frombase|--from-base) frombase="--from-base"; shift 1;;
         -import|--import-bucket) import="$2"; shift 2;;
-        -skipdocker|--skip-docker) skipdocker=true; shift 2;;
+        -skipdocker|--skip-docker) skipdocker=true; shift 1;;
+        -dockeronly|--docker-only) dockeronly=true; shift 1;;
         *) echo "Unknown parameter passed: $1"; exit 1;;
     esac
 done
@@ -78,9 +80,11 @@ fi
 
 # `--first-build` will import artifact registry created by base
 # `--github-resources` will create a github google service account secret
-source "${ROOT_DIR}/bin/tf_main.sh" \
-    --terraform apply \
-    $frombase \
-    --auto-approve
+if [ "$dockeronly" != true ]; then
+    source "${ROOT_DIR}/bin/tf_main.sh" \
+        --terraform apply \
+        $frombase \
+        --auto-approve
+fi
 
 echo "***** Build process complete!"
