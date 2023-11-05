@@ -80,6 +80,7 @@ if [ -z "$IMAGE_URL" ]; then
 fi
 if [ -n "$GITHUB_TOKEN" ]; then
     github=true
+    TF_VAR_create_github_resources=$github
 fi
 
 

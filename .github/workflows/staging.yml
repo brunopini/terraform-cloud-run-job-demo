@@ -29,7 +29,6 @@ jobs:
         run: |
           echo -n "${TERRAFORM_SECRET}" > "${ROOT_DIR}/google-credentials.json"
           echo "GOOGLE_CREDENTIALS_PATH=${ROOT_DIR}/google-credentials.json" >> $GITHUB_ENV
-          echo "$GOOGLE_CREDENTIALS_PATH"
 
       - name: Push state
         env:
