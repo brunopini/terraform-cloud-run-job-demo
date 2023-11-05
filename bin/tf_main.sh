@@ -93,6 +93,7 @@ export TF_VAR_docker_repository_id=$REPOSITORY_ID
 export TF_VAR_image_url=$IMAGE_URL
 export TF_VAR_create_github_resources=$GITHUB_RESOURCES
 export TF_VAR_github_repository=$GITHUB_REPOSITORY
+export TF_VAR_github_token=$GITHUB_TOKEN
 
 source "${ROOT_DIR}/bin/_github_env.sh"
 

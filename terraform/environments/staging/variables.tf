@@ -49,3 +49,8 @@ variable "github_repository" {
     type = string
     default ="my-github-repository"
 }
+
+variable "github_token" {
+    type = string
+    default =""
+}
