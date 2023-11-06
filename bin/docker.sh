@@ -12,7 +12,7 @@ while [[ "$#" -gt 0 ]]; do
         -docker|--docker) cmd="$2"; shift 2;;
         -image-path|--image-path) path="$2"; shift 2;;
         -image|--image-name) name="$2"; shift 2;;
-        -label|--label) label="$2"; shift 2;;
+        -label|--image-label) label="$2"; shift 2;;
         -push|--push) push=true; shift 2;;
         -quiet|--quiet) quiet="--quiet"; shift 2;;
         *) echo "Unknown parameter passed: $1"; exit 1;;
