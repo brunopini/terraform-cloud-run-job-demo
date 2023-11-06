@@ -7,9 +7,6 @@ This repo was created to serve as a minimal CI/CD boilerplate for your serverles
 Template consists of:
 
 - An [automatic deployment and destruction module](./bin) called from `./terraform/environments/staging/build.sh` and `./terraform/environments/staging/destroy.sh`.
-
-> A few custom arguments are passed to these scripts, for modular access. See dedication section below. TODO!!
-
 - A [Terraform module](./terraform/) with a directory approach to environments, and two stages of provisioning: [base](./terraform/environments/staging/base/) and [main](./terraform/environments/staging/) infrastructures.
   - Uses the new `google_cloud_run_v2_job` resource, and the Direct VPC Egress (new recommended practice replacing prior VPC Access Connector).
   - Uses cloud naming conventions described by [stepan.wtf](https://stepan.wtf/cloud-naming-convention/#:~:text=The%20rule%20of%20thumb%20is,or%20within%20a%20given%20scope.), but all can be customized.
@@ -40,7 +37,7 @@ Template consists of:
 ghcreds="${GITHUB_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/github.env}"`
 - Fill in all variables in both the base and main `terraform.tfvars` files.
   - Resource naming is handled directly in `.tf` files.
-- Make sure you understand both `build.sh` and `destroy.sh` scripts before executing. Not a lot of changes are needed there, except for asserting executable permissions (`chmod +x [script]`).
+- Make sure you understand both `build.sh` and `destroy.sh` scripts before executing. The default variables definition on top can be carefully used to tweak the script's default befaviour. Before reunning, assert and set executable permissions (`chmod +x [script]`).
 
 ## Build
 
