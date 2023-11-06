@@ -7,7 +7,7 @@ if [ -z "$ROOT_DIR" ]; then
     ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
 fi
 
-# Fill in!
+# Default config
 env="${ENV_PATH:-staging}"
 gcreds="${GOOGLE_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/dem-prj-s-gsa-g-terraform.json}"
 ghcreds="${GITHUB_CREDENTIALS_PATH:-$ROOT_DIR/.secrets/github.env}"
@@ -17,6 +17,9 @@ frombase=""
 import=""
 skipdocker=false
 dockeronly=false
+imagename="demo-image"
+imagepath="demo-image"
+imagelabel="latest"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -28,6 +31,9 @@ while [[ "$#" -gt 0 ]]; do
         -import|--import-bucket) import="$2"; shift 2;;
         -skipdocker|--skip-docker) skipdocker=true; shift 1;;
         -dockeronly|--docker-only) dockeronly=true; shift 1;;
+        -image-name|--image-name) imagename="$2"; shift 2;;
+        -image-path|--image-path) imagepath="$2"; shift 2;;
+        -image-label|--image-label) imagelabel="$2"; shift 2;;
         *) echo "Unknown parameter passed: $1"; exit 1;;
     esac
 done
@@ -73,8 +79,9 @@ fi
 if [ "$skipdocker" == false ]; then
     source "${ROOT_DIR}/bin/docker.sh" \
         --docker build \
-        --image-path demo-image \
-        --image-name demo-image \
+        --image-path "$imagepath" \
+        --image-name "$imagename" \
+        --image-label "$imagelabel" \
         --push \
         --quiet
 fi
