@@ -137,7 +137,7 @@ ___
 
 ### Following Builds
 
-Backend bucket must be passed either via `--backend-bucket [name]` or by exporting `ASSETS_BUCKET`.
+Backend bucket must be passed either via `--assets-bucket [name]` or by exporting `ASSETS_BUCKET`.
 
 > Keep `--github-actions` flag or Github Actions resources will be destroyed.
 
@@ -165,7 +165,7 @@ bash ./terraform/environments/staging/build.sh --docker-only
 To avoid building and pushing Docker image.
 
 ``` @bash
-bash ./terraform/environments/staging/build.sh --backend-bucket [name] --skip-docker [--github-actions]
+bash ./terraform/environments/staging/build.sh --assets-bucket [name] --skip-docker [--github-actions]
 ```
 
 ___
@@ -174,12 +174,14 @@ ___
 
 Similarly to `build.sh`, `destroy.sh` handles the destruction of all provisioned infrastructure, including the locally built Docker image. A `--keep-base` and a `--keep-docker` flag are available for more control on destruction.
 
+Backend bucket must, like with `build.sg`, be passed either via `--assets-bucket [name]` or by exporting `ASSETS_BUCKET`.
+
 ### Keeping Base
 
 The `base` Terraform module holds the Terraform state bucket state files. If destroyed, this demo will delete the bucket and all of its content based on the `force_destroy = true` argument passed to the bucket resource. To avoid this destruction, edit the Terraform resource by removing the `forece_destroy` argument or pass the `--keep-base` flag to `destroy.sh`:
 
 ``` @bash
-bash ./terraform/environments/staging/destroy.sh --keep-base
+bash ./terraform/environments/staging/destroy.sh --assets-bucket [name] --keep-base
 ```
 
 ### Keeping Local Docker Images
@@ -187,13 +189,13 @@ bash ./terraform/environments/staging/destroy.sh --keep-base
 By default, the this demo will destroy everything it once provisioned - this includes the locally built Docker image. To avoid removing the images during destruction, pass the `--keep-docker` flag to `destroy.sh`.
 
 ``` @bash
-bash ./terraform/environments/staging/destroy.sh --keep-docker
+bash ./terraform/environments/staging/destroy.sh--assets-bucket [name] --keep-docker
 ```
 
 These two flags can be combined:
 
 ``` @bash
-bash ./terraform/environments/staging/destroy.sh --keep-docker --keep-base
+bash ./terraform/environments/staging/destroy.sh --assets-bucket [name] --keep-docker --keep-base
 ```
 
 After destruction is complete, you will still need to delete the Google Service Account you created for this demo, and diable the Service Usage API manually.
