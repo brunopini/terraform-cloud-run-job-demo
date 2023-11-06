@@ -5,7 +5,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../../../" && pwd)"
 
-# Fill in!
+# Default config
 env="staging"
 gcreds="$ROOT_DIR/.secrets/dem-prj-s-gsa-g-terraform.json"
 assets=$ASSETS_BUCKET
