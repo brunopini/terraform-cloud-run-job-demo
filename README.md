@@ -124,13 +124,13 @@ All building and provisioning are handled in the `build.sh` script, which consis
 #### With Github Actions Setup
 
 ``` @bash
-source ./terraform/environments/staging/build.sh --from-base --github-actions
+bash ./terraform/environments/staging/build.sh --from-base --github-actions
 ```
 
 #### Without Github Actions
 
 ``` @bash
-source ./terraform/environments/staging/build.sh --from-base
+bash ./terraform/environments/staging/build.sh --from-base
 ```
 
 ___
@@ -143,13 +143,13 @@ Backend bucket must be passed either via `--backend-bucket [name]` or by exporti
 
 ``` @bash
 export ASSETS_BUCKET=[]
-source ./terraform/environments/staging/build.sh [--github-actions]
+bash ./terraform/environments/staging/build.sh [--github-actions]
 ```
 
 or
 
 ``` @bash
-source ./terraform/environments/staging/build.sh --assets-bucket [name] [--github-actions]
+bash ./terraform/environments/staging/build.sh --assets-bucket [name] [--github-actions]
 ```
 
 #### Docker Push
@@ -157,7 +157,7 @@ source ./terraform/environments/staging/build.sh --assets-bucket [name] [--githu
 To avoid any Terraform provision.
 
 ``` @bash
-source ./terraform/environments/staging/build.sh --docker-only
+bash ./terraform/environments/staging/build.sh --docker-only
 ```
 
 #### Skip Docker
@@ -165,7 +165,7 @@ source ./terraform/environments/staging/build.sh --docker-only
 To avoid building and pushing Docker image.
 
 ``` @bash
-source ./terraform/environments/staging/build.sh --backend-bucket [name] --skip-docker [--github-actions]
+bash ./terraform/environments/staging/build.sh --backend-bucket [name] --skip-docker [--github-actions]
 ```
 
 ___
