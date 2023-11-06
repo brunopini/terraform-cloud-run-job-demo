@@ -15,7 +15,7 @@ Template consists of:
   - It pulls from a docker image deployed to Artifact Registry, asserting the success of the Docker build and push; and of the provisioning of Google's Docker repository;
   - It then requests from [https://httpbin.org/get](https://httpbin.org/get) and prints the response, asserting the success of the VPC and Direct VPC Egress provison;
   - And fetches a JSON key from a Service Account created during deployment, via Google Secrets Manager, asserting the success of these services.
-  - Finally, it's successful scheduling and consistent execution asserts the success of the Cloud Run Job, Scheduler and Service Accounts involved.
+  - Finally, its successful scheduling and consistent execution asserts the success of the Cloud Run Job, Scheduler and Service Accounts involved.
 
 ## Tree
 
