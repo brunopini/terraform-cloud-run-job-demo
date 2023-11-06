@@ -26,6 +26,10 @@ echo "***** Building [$env] main infrastrcuture"
 cd "$ROOT_DIR/terraform/environments/$env" ||
     { echo "Cannot cd into $ROOT_DIR/terraform/environments/$env"; exit 1; }
 
+if [ -z "$PROJECT_ID" ]; then
+    source ${ROOT_DIR}/bin/_read_project_id.sh
+fi
+
 if [ -z "$GOOGLE_CREDENTIALS_PATH" ] && [ -n "$gcreds" ]; then
     GOOGLE_CREDENTIALS_PATH="$gcreds"
 fi
