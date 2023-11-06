@@ -17,6 +17,56 @@ Template consists of:
   - And fetches a JSON key from a Service Account created during deployment, via Google Secrets Manager, asserting the success of these services.
   - Finally, it's successful scheduling and consistent execution asserts the success of the Cloud Run Job, Scheduler and Service Accounts involved.
 
+## Tree
+
+``` @bash
+.
+├── .secrets
+│   ├── dem-prj-s-gsa-g-terraform.json
+│   └── github.env
+├── LICENSE
+├── README.md
+├── bin
+│   ├── _gcloud.sh
+│   ├── _github_env.sh
+│   ├── _read_project_id.sh
+│   ├── docker.sh
+│   ├── tf_base.sh
+│   └── tf_main.sh
+├── docker
+│   └── demo-image
+│       ├── Dockerfile
+│       ├── demo.py
+│       └── requirements.txt
+└── terraform
+    ├── environments
+    │   └── staging
+    │       ├── base
+    │       │   ├── apis.tf
+    │       │   ├── locals.tf
+    │       │   ├── main.tf
+    │       │   ├── outputs.tf
+    │       │   ├── providers.tf
+    │       │   ├── terraform.tfstate
+    │       │   ├── terraform.tfvars
+    │       │   └── variables.tf
+    │       ├── build.sh
+    │       ├── destroy.sh
+    │       ├── github.tf
+    │       ├── locals.tf
+    │       ├── main.tf
+    │       ├── outputs.tf
+    │       ├── providers.tf
+    │       ├── terraform.tfvars
+    │       ├── variables.tf
+    │       └── vpc.tf
+    └── modules
+        └── github
+            ├── actions.tf
+            ├── providers.tf
+            └── variables.tf
+```
+
 ## Requirements
 
 - A new Google Cloud Project ID created from this demo.
@@ -120,56 +170,6 @@ source ./terraform/environments/staging/build.sh --backend-bucket [name] --skip-
 
 ___
 
-## Tree
-
-``` @bash
-.
-├── .secrets
-│   ├── dem-prj-s-gsa-g-terraform.json
-│   └── github.env
-├── LICENSE
-├── README.md
-├── bin
-│   ├── _gcloud.sh
-│   ├── _github_env.sh
-│   ├── _read_project_id.sh
-│   ├── docker.sh
-│   ├── tf_base.sh
-│   └── tf_main.sh
-├── docker
-│   └── demo-image
-│       ├── Dockerfile
-│       ├── demo.py
-│       └── requirements.txt
-└── terraform
-    ├── environments
-    │   └── staging
-    │       ├── base
-    │       │   ├── apis.tf
-    │       │   ├── locals.tf
-    │       │   ├── main.tf
-    │       │   ├── outputs.tf
-    │       │   ├── providers.tf
-    │       │   ├── terraform.tfstate
-    │       │   ├── terraform.tfvars
-    │       │   └── variables.tf
-    │       ├── build.sh
-    │       ├── destroy.sh
-    │       ├── github.tf
-    │       ├── locals.tf
-    │       ├── main.tf
-    │       ├── outputs.tf
-    │       ├── providers.tf
-    │       ├── terraform.tfvars
-    │       ├── variables.tf
-    │       └── vpc.tf
-    └── modules
-        └── github
-            ├── actions.tf
-            ├── providers.tf
-            └── variables.tf
-```
-
 ## Destroy
 
 Similarly to `build.sh`, `destroy.sh` handles the destruction of all provisioned infrastructure, including the locally built Docker image. A `--keep-base` and a `--keep-docker` flag are available for more control on destruction.
@@ -216,6 +216,7 @@ Three Github Actions workflows are created:
 - [x] Adding a Secrets Manager environment to the Cloud Run container.
 - [x] Creating Github Workflows for CI/CD.
 - [x] Expand and modularize Github Worflows.
+- [ ] Adding unit tests and other validations.
 - [ ] Adding a Cloud Storage connection.
 - [ ] Adding a Cloud Run Service with a public IP.
 - [ ] Adding VPC Peering functionality.
